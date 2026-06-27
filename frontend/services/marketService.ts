@@ -1,30 +1,6 @@
-export interface Candle {
-  time: string;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-  volume: number;
-}
+import type { Candle, Stock } from "../types/stock";
 
-export interface MarketStock {
-  symbol: string;
-  name: string;
-  company: string;
-  sector: string;
-  price: number;
-  change: number;
-  changePercent: number;
-  volumeRatio: number;
-  rsi: number;
-  breakout: boolean;
-  smartMoney: boolean;
-  minervini: boolean;
-  signal: string;
-  risk: "Düşük" | "Orta" | "Yüksek";
-}
-
-const marketStocks: MarketStock[] = [
+const marketStocks: Stock[] = [
   {
     symbol: "THYAO",
     name: "Türk Hava Yolları",
@@ -59,12 +35,12 @@ const marketStocks: MarketStock[] = [
   },
 ];
 
-export function getMarketStocks(): MarketStock[] {
+export function getMarketStocks(): Stock[] {
   return marketStocks;
 }
 
 export const marketService = {
-  getTopStocks(): MarketStock[] {
+  getTopStocks(): Stock[] {
     return marketStocks;
   },
 
