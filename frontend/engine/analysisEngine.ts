@@ -5,6 +5,7 @@ import { calculateMACD } from "./macdEngine";
 import { calculateVolumeRatio } from "./volumeEngine";
 import { detectBreakout } from "./breakoutEngine";
 import { detectSmartMoney } from "./smartMoneyEngine";
+import { detectMinerviniTrend } from "./minerviniEngine";
 
 export interface AnalysisResult {
   rsi: number;
@@ -27,6 +28,15 @@ export interface AnalysisResult {
   accumulation: boolean;
   strongClose: boolean;
   volumeExpansion: boolean;
+
+  minervini: boolean;
+  minerviniScore: number;
+  priceAboveEma50: boolean;
+  ema50AboveEma150: boolean;
+  ema150AboveEma200: boolean;
+  ema200Rising: boolean;
+  nearHigh: boolean;
+  farFromLow: boolean;
 }
 
 export function analyzeStock(candles: Candle[]): AnalysisResult {
@@ -41,6 +51,7 @@ export function analyzeStock(candles: Candle[]): AnalysisResult {
 
   const breakoutResult = detectBreakout(candles);
   const smartMoneyResult = detectSmartMoney(candles);
+  const minerviniResult = detectMinerviniTrend(candles);
 
   const ema20 = ema20Values.at(-1) ?? 0;
   const ema50 = ema50Values.at(-1) ?? 0;
@@ -89,5 +100,14 @@ export function analyzeStock(candles: Candle[]): AnalysisResult {
     accumulation: smartMoneyResult.accumulation,
     strongClose: smartMoneyResult.strongClose,
     volumeExpansion: smartMoneyResult.volumeExpansion,
+
+    minervini: minerviniResult.minervini,
+    minerviniScore: minerviniResult.score,
+    priceAboveEma50: minerviniResult.priceAboveEma50,
+    ema50AboveEma150: minerviniResult.ema50AboveEma150,
+    ema150AboveEma200: minerviniResult.ema150AboveEma200,
+    ema200Rising: minerviniResult.ema200Rising,
+    nearHigh: minerviniResult.nearHigh,
+    farFromLow: minerviniResult.farFromLow,
   };
 }

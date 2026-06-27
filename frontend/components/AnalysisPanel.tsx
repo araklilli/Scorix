@@ -40,6 +40,10 @@ function getSmartMoneyStyle(isSmartMoney: boolean) {
   return isSmartMoney ? "text-emerald-300" : "text-slate-400";
 }
 
+function getMinerviniStyle(isMinervini: boolean) {
+  return isMinervini ? "text-emerald-300" : "text-slate-400";
+}
+
 export default function AnalysisPanel() {
   const [view, setView] = useState<AnalysisView | null>(null);
 
@@ -68,7 +72,7 @@ export default function AnalysisPanel() {
         <div>
           <h3 className="text-xl font-bold">SCORIX Analiz Paneli</h3>
           <p className="mt-1 text-sm text-slate-500">
-            RSI · EMA · MACD · Volume · Breakout · Smart Money
+            RSI · EMA · MACD · Volume · Breakout · Smart Money · Minervini
           </p>
         </div>
 
@@ -81,7 +85,7 @@ export default function AnalysisPanel() {
         </span>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4 xl:grid-cols-8">
+      <div className="grid gap-4 md:grid-cols-4 xl:grid-cols-9">
         <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
           <p className="text-xs text-slate-500">RSI</p>
           <p className="mt-2 text-2xl font-bold">{analysis.rsi}</p>
@@ -133,6 +137,20 @@ export default function AnalysisPanel() {
           </p>
           <p className="mt-1 text-xs text-slate-500">
             Score {analysis.smartMoneyScore}
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+          <p className="text-xs text-slate-500">Minervini</p>
+          <p
+            className={`mt-2 text-xl font-bold ${getMinerviniStyle(
+              analysis.minervini
+            )}`}
+          >
+            {analysis.minervini ? "YES" : "NO"}
+          </p>
+          <p className="mt-1 text-xs text-slate-500">
+            Score {analysis.minerviniScore}
           </p>
         </div>
 
