@@ -1,0 +1,113 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { marketService } from "../services/marketService";
+import { analyzeStock } from "../engine/analysisEngine";
+import { makeDecision } from "../engine/decisionEngine";
+import type { AnalysisResult } from "../engine/analysisEngine";
+import type { DecisionResult } from "../engine/decisionEngine";
+
+type AnalysisView = {
+  analysis: AnalysisResult;
+  decision: DecisionResult;
+};
+
+function getDecisionStyle(decision: DecisionResult["decision"]) {
+  if (decision === "STRONG BUY" || decision === "BUY") {
+    return "bg-emerald-400/10 text-emerald-300";
+  }
+
+  if (decision === "STRONG SELL" || decision === "SELL") {
+    return "bg-red-400/10 text-red-300";
+  }
+
+  return "bg-yellow-400/10 text-yellow-300";
+}
+
+function getVolumeStyle(volumeTrend: AnalysisResult["volumeTrend"]) {
+  if (volumeTrend === "STRONG") return "text-emerald-300";
+  if (volumeTrend === "WEAK") return "text-red-300";
+  return "text-yellow-300";
+}
+
+export default function AnalysisPanel() {
+  const [view, setView] = useState<AnalysisView | null>(null);
+
+  useEffect(() => {
+    async function loadAnalysis() {
+      const candles = await marketService.getCandles("THYAO");
+      const analysis = analyzeStock(candles);
+      const decision = makeDecision(analysis);
+
+      setView({
+        analysis,
+        decision,
+      });
+    }
+
+    loadAnalysis();
+  }, []);
+
+  if (!view) return null;
+
+  const { analysis, decision } = view;
+
+  return (
+    <section className="mt-6 rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+      <div className="mb-5 flex items-center justify-between">
+        <div>
+          <h3 className="text-xl font-bold">SCORIX Analiz Paneli</h3>
+          <p className="mt-1 text-sm text-slate-500">
+            RSI · EMA · MACD · Hacim · Decision Engine
+          </p>
+        </div>
+
+        <span
+          className={`rounded-full px-4 py-2 text-xs ${getDecisionStyle(
+            decision.decision
+          )}`}
+        >
+          {decision.decision} · {decision.confidence}%
+        </span>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-6">
+        <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+          <p className="text-xs text-slate-500">RSI</p>
+          <p className="mt-2 text-2xl font-bold">{analysis.rsi}</p>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+          <p className="text-xs text-slate-500">EMA Trend</p>
+          <p className="mt-2 text-2xl font-bold">{analysis.emaTrend}</p>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+          <p className="text-xs text-slate-500">MACD Trend</p>
+          <p className="mt-2 text-2xl font-bold">{analysis.macdTrend}</p>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+          <p className="text-xs text-slate-500">Volume</p>
+          <p
+            className={`mt-2 text-2xl font-bold ${getVolumeStyle(
+              analysis.volumeTrend
+            )}`}
+          >
+            {analysis.volumeRatio}x
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+          <p className="text-xs text-slate-500">MACD</p>
+          <p className="mt-2 text-2xl font-bold">{analysis.macd}</p>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+          <p className="text-xs text-slate-500">Confidence</p>
+          <p className="mt-2 text-2xl font-bold">{decision.confidence}%</p>
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -4,6 +4,7 @@ import SearchBar from "../components/SearchBar";
 import StatsCard from "../components/StatsCard";
 import StockTable from "../components/StockTable";
 import ScorixChart from "../components/ScorixChart";
+import AnalysisPanel from "../components/AnalysisPanel";
 
 export default function Home() {
   return (
@@ -35,6 +36,8 @@ export default function Home() {
           </section>
 
           <StatsCard />
+
+          <AnalysisPanel />
 
           <ScorixChart />
 
