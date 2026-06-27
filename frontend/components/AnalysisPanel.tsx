@@ -30,12 +30,14 @@ function getVolumeStyle(volumeTrend: AnalysisResult["volumeTrend"]) {
   return "text-yellow-300";
 }
 
-function getBreakoutStyle(
-  strength: AnalysisResult["breakoutStrength"]
-) {
+function getBreakoutStyle(strength: AnalysisResult["breakoutStrength"]) {
   if (strength === "STRONG") return "text-emerald-300";
   if (strength === "NORMAL") return "text-yellow-300";
   return "text-slate-400";
+}
+
+function getSmartMoneyStyle(isSmartMoney: boolean) {
+  return isSmartMoney ? "text-emerald-300" : "text-slate-400";
 }
 
 export default function AnalysisPanel() {
@@ -44,7 +46,6 @@ export default function AnalysisPanel() {
   useEffect(() => {
     async function loadAnalysis() {
       const candles = await marketService.getCandles("THYAO");
-
       const analysis = analyzeStock(candles);
       const decision = makeDecision(analysis);
 
@@ -67,7 +68,7 @@ export default function AnalysisPanel() {
         <div>
           <h3 className="text-xl font-bold">SCORIX Analiz Paneli</h3>
           <p className="mt-1 text-sm text-slate-500">
-            RSI · EMA · MACD · Volume · Breakout
+            RSI · EMA · MACD · Volume · Breakout · Smart Money
           </p>
         </div>
 
@@ -80,7 +81,7 @@ export default function AnalysisPanel() {
         </span>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-7">
+      <div className="grid gap-4 md:grid-cols-4 xl:grid-cols-8">
         <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
           <p className="text-xs text-slate-500">RSI</p>
           <p className="mt-2 text-2xl font-bold">{analysis.rsi}</p>
@@ -109,7 +110,6 @@ export default function AnalysisPanel() {
 
         <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
           <p className="text-xs text-slate-500">Breakout</p>
-
           <p
             className={`mt-2 text-xl font-bold ${getBreakoutStyle(
               analysis.breakoutStrength
@@ -117,24 +117,33 @@ export default function AnalysisPanel() {
           >
             {analysis.breakout ? "YES" : "NO"}
           </p>
-
           <p className="mt-1 text-xs text-slate-500">
             {analysis.breakoutStrength}
           </p>
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
-          <p className="text-xs text-slate-500">Resistance</p>
-          <p className="mt-2 text-xl font-bold">
-            {analysis.resistance}
+          <p className="text-xs text-slate-500">Smart Money</p>
+          <p
+            className={`mt-2 text-xl font-bold ${getSmartMoneyStyle(
+              analysis.smartMoney
+            )}`}
+          >
+            {analysis.smartMoney ? "YES" : "NO"}
+          </p>
+          <p className="mt-1 text-xs text-slate-500">
+            Score {analysis.smartMoneyScore}
           </p>
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+          <p className="text-xs text-slate-500">Resistance</p>
+          <p className="mt-2 text-xl font-bold">{analysis.resistance}</p>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
           <p className="text-xs text-slate-500">Confidence</p>
-          <p className="mt-2 text-2xl font-bold">
-            {decision.confidence}%
-          </p>
+          <p className="mt-2 text-2xl font-bold">{decision.confidence}%</p>
         </div>
       </div>
     </section>

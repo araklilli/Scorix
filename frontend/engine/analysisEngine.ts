@@ -4,6 +4,7 @@ import { calculateEMA } from "./emaEngine";
 import { calculateMACD } from "./macdEngine";
 import { calculateVolumeRatio } from "./volumeEngine";
 import { detectBreakout } from "./breakoutEngine";
+import { detectSmartMoney } from "./smartMoneyEngine";
 
 export interface AnalysisResult {
   rsi: number;
@@ -20,6 +21,12 @@ export interface AnalysisResult {
   breakout: boolean;
   breakoutStrength: "STRONG" | "NORMAL" | "WEAK";
   resistance: number;
+
+  smartMoney: boolean;
+  smartMoneyScore: number;
+  accumulation: boolean;
+  strongClose: boolean;
+  volumeExpansion: boolean;
 }
 
 export function analyzeStock(candles: Candle[]): AnalysisResult {
@@ -31,7 +38,9 @@ export function analyzeStock(candles: Candle[]): AnalysisResult {
   const ema50Values = calculateEMA(closes, 50);
   const macdResult = calculateMACD(closes);
   const volumeRatio = calculateVolumeRatio(volumes);
+
   const breakoutResult = detectBreakout(candles);
+  const smartMoneyResult = detectSmartMoney(candles);
 
   const ema20 = ema20Values.at(-1) ?? 0;
   const ema50 = ema50Values.at(-1) ?? 0;
@@ -74,5 +83,11 @@ export function analyzeStock(candles: Candle[]): AnalysisResult {
     breakout: breakoutResult.isBreakout,
     breakoutStrength: breakoutResult.breakoutStrength,
     resistance: breakoutResult.resistanceLevel,
+
+    smartMoney: smartMoneyResult.smartMoney,
+    smartMoneyScore: smartMoneyResult.score,
+    accumulation: smartMoneyResult.accumulation,
+    strongClose: smartMoneyResult.strongClose,
+    volumeExpansion: smartMoneyResult.volumeExpansion,
   };
 }
