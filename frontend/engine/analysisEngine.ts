@@ -3,6 +3,7 @@ import { calculateRSI } from "./rsiEngine";
 import { calculateEMA } from "./emaEngine";
 import { calculateMACD } from "./macdEngine";
 import { calculateVolumeRatio } from "./volumeEngine";
+import { detectBreakout } from "./breakoutEngine";
 
 export interface AnalysisResult {
   rsi: number;
@@ -11,9 +12,14 @@ export interface AnalysisResult {
   macd: number;
   histogram: number;
   volumeRatio: number;
+
   emaTrend: "BULLISH" | "BEARISH" | "NEUTRAL";
   macdTrend: "POSITIVE" | "NEGATIVE" | "NEUTRAL";
   volumeTrend: "STRONG" | "NORMAL" | "WEAK";
+
+  breakout: boolean;
+  breakoutStrength: "STRONG" | "NORMAL" | "WEAK";
+  resistance: number;
 }
 
 export function analyzeStock(candles: Candle[]): AnalysisResult {
@@ -25,6 +31,7 @@ export function analyzeStock(candles: Candle[]): AnalysisResult {
   const ema50Values = calculateEMA(closes, 50);
   const macdResult = calculateMACD(closes);
   const volumeRatio = calculateVolumeRatio(volumes);
+  const breakoutResult = detectBreakout(candles);
 
   const ema20 = ema20Values.at(-1) ?? 0;
   const ema50 = ema50Values.at(-1) ?? 0;
@@ -32,17 +39,25 @@ export function analyzeStock(candles: Candle[]): AnalysisResult {
   const histogram = macdResult.histogram.at(-1) ?? 0;
 
   const emaTrend =
-    ema20 > ema50 ? "BULLISH" : ema20 < ema50 ? "BEARISH" : "NEUTRAL";
+    ema20 > ema50
+      ? "BULLISH"
+      : ema20 < ema50
+      ? "BEARISH"
+      : "NEUTRAL";
 
   const macdTrend =
     macd > 0 && histogram > 0
       ? "POSITIVE"
       : macd < 0 || histogram < 0
-        ? "NEGATIVE"
-        : "NEUTRAL";
+      ? "NEGATIVE"
+      : "NEUTRAL";
 
   const volumeTrend =
-    volumeRatio >= 2 ? "STRONG" : volumeRatio < 1 ? "WEAK" : "NORMAL";
+    volumeRatio >= 2
+      ? "STRONG"
+      : volumeRatio < 1
+      ? "WEAK"
+      : "NORMAL";
 
   return {
     rsi,
@@ -51,8 +66,13 @@ export function analyzeStock(candles: Candle[]): AnalysisResult {
     macd,
     histogram,
     volumeRatio,
+
     emaTrend,
     macdTrend,
     volumeTrend,
+
+    breakout: breakoutResult.isBreakout,
+    breakoutStrength: breakoutResult.breakoutStrength,
+    resistance: breakoutResult.resistanceLevel,
   };
 }

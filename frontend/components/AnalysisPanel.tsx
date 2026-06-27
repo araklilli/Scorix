@@ -30,12 +30,21 @@ function getVolumeStyle(volumeTrend: AnalysisResult["volumeTrend"]) {
   return "text-yellow-300";
 }
 
+function getBreakoutStyle(
+  strength: AnalysisResult["breakoutStrength"]
+) {
+  if (strength === "STRONG") return "text-emerald-300";
+  if (strength === "NORMAL") return "text-yellow-300";
+  return "text-slate-400";
+}
+
 export default function AnalysisPanel() {
   const [view, setView] = useState<AnalysisView | null>(null);
 
   useEffect(() => {
     async function loadAnalysis() {
       const candles = await marketService.getCandles("THYAO");
+
       const analysis = analyzeStock(candles);
       const decision = makeDecision(analysis);
 
@@ -58,7 +67,7 @@ export default function AnalysisPanel() {
         <div>
           <h3 className="text-xl font-bold">SCORIX Analiz Paneli</h3>
           <p className="mt-1 text-sm text-slate-500">
-            RSI · EMA · MACD · Hacim · Decision Engine
+            RSI · EMA · MACD · Volume · Breakout
           </p>
         </div>
 
@@ -71,7 +80,7 @@ export default function AnalysisPanel() {
         </span>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-6">
+      <div className="grid gap-4 md:grid-cols-7">
         <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
           <p className="text-xs text-slate-500">RSI</p>
           <p className="mt-2 text-2xl font-bold">{analysis.rsi}</p>
@@ -79,12 +88,12 @@ export default function AnalysisPanel() {
 
         <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
           <p className="text-xs text-slate-500">EMA Trend</p>
-          <p className="mt-2 text-2xl font-bold">{analysis.emaTrend}</p>
+          <p className="mt-2 text-xl font-bold">{analysis.emaTrend}</p>
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
           <p className="text-xs text-slate-500">MACD Trend</p>
-          <p className="mt-2 text-2xl font-bold">{analysis.macdTrend}</p>
+          <p className="mt-2 text-xl font-bold">{analysis.macdTrend}</p>
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
@@ -99,13 +108,33 @@ export default function AnalysisPanel() {
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
-          <p className="text-xs text-slate-500">MACD</p>
-          <p className="mt-2 text-2xl font-bold">{analysis.macd}</p>
+          <p className="text-xs text-slate-500">Breakout</p>
+
+          <p
+            className={`mt-2 text-xl font-bold ${getBreakoutStyle(
+              analysis.breakoutStrength
+            )}`}
+          >
+            {analysis.breakout ? "YES" : "NO"}
+          </p>
+
+          <p className="mt-1 text-xs text-slate-500">
+            {analysis.breakoutStrength}
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+          <p className="text-xs text-slate-500">Resistance</p>
+          <p className="mt-2 text-xl font-bold">
+            {analysis.resistance}
+          </p>
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
           <p className="text-xs text-slate-500">Confidence</p>
-          <p className="mt-2 text-2xl font-bold">{decision.confidence}%</p>
+          <p className="mt-2 text-2xl font-bold">
+            {decision.confidence}%
+          </p>
         </div>
       </div>
     </section>
