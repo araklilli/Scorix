@@ -1,5 +1,11 @@
-import { topStocks } from "../data/stocks";
+import { getMarketStocks } from "../services/marketService";
 import { calculateScore } from "../engine/scoreEngine";
+
+function getChangeColor(change: number) {
+  if (change > 0) return "text-emerald-400";
+  if (change < 0) return "text-red-400";
+  return "text-slate-400";
+}
 
 function getRiskStyle(risk: string) {
   if (risk === "Düşük") return "bg-emerald-400/10 text-emerald-300";
@@ -8,18 +14,20 @@ function getRiskStyle(risk: string) {
 }
 
 export default function StockTable() {
+  const stocks = getMarketStocks();
+
   return (
     <section className="mt-6 rounded-3xl border border-white/10 bg-white/[0.03] p-6">
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h3 className="text-xl font-bold">En Yüksek Skorlu Hisseler</h3>
           <p className="mt-1 text-sm text-slate-500">
-            SCORIX Engine tarafından hesaplanan demo skorlar
+            Market Service + SCORIX Engine v1
           </p>
         </div>
 
-        <span className="rounded-full bg-emerald-400/10 px-4 py-2 text-xs text-emerald-300">
-          Engine v1
+        <span className="rounded-full bg-blue-400/10 px-4 py-2 text-xs text-blue-300">
+          Service Layer
         </span>
       </div>
 
@@ -27,15 +35,16 @@ export default function StockTable() {
         <div className="grid grid-cols-12 bg-white/[0.04] px-5 py-3 text-xs font-semibold text-slate-500">
           <div className="col-span-1">#</div>
           <div className="col-span-2">Hisse</div>
-          <div className="col-span-2">RSI</div>
-          <div className="col-span-2">Hacim</div>
+          <div className="col-span-1 text-right">Fiyat</div>
+          <div className="col-span-1 text-right">Günlük</div>
+          <div className="col-span-2">RSI / Hacim</div>
           <div className="col-span-2">Sinyal</div>
           <div className="col-span-2">SCORIX</div>
           <div className="col-span-1 text-right">Risk</div>
         </div>
 
         <div className="divide-y divide-white/10">
-          {topStocks.map((stock, index) => {
+          {stocks.map((stock, index) => {
             const score = calculateScore(stock);
 
             return (
@@ -47,15 +56,24 @@ export default function StockTable() {
 
                 <div className="col-span-2">
                   <div className="font-bold">{stock.symbol}</div>
-                  <div className="text-xs text-slate-500">BIST</div>
+                  <div className="text-xs text-slate-500">{stock.name}</div>
+                </div>
+
+                <div className="col-span-1 text-right text-sm font-semibold">
+                  ₺{stock.price.toFixed(2)}
+                </div>
+
+                <div
+                  className={`col-span-1 text-right text-sm font-semibold ${getChangeColor(
+                    stock.changePercent
+                  )}`}
+                >
+                  {stock.changePercent > 0 ? "+" : ""}
+                  {stock.changePercent.toFixed(2)}%
                 </div>
 
                 <div className="col-span-2 text-sm text-slate-400">
-                  RSI {stock.rsi}
-                </div>
-
-                <div className="col-span-2 text-sm text-slate-400">
-                  {stock.volumeRatio}x
+                  RSI {stock.rsi} / {stock.volumeRatio}x
                 </div>
 
                 <div className="col-span-2">
