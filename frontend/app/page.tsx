@@ -7,6 +7,7 @@ import ScorixChart from "../components/ScorixChart";
 import AnalysisPanel from "../components/AnalysisPanel";
 import ScorixScoreCard from "../components/ScorixScoreCard";
 import DecisionReport from "../components/DecisionReport";
+import TopOpportunities from "../components/TopOpportunities";
 
 export default function Home() {
   return (
@@ -40,6 +41,8 @@ export default function Home() {
           <StatsCard />
 
           <ScorixScoreCard />
+
+          <TopOpportunities />
 
           <DecisionReport />
 
