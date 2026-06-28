@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { marketService } from "../services/marketService";
 import { analyzeStock } from "../engine/analysisEngine";
 import { makeDecision } from "../engine/decisionEngine";
+import { useSelectedStockContext } from "../context/SelectedStockContext";
 import type { AnalysisResult } from "../engine/analysisEngine";
 import type { DecisionResult } from "../engine/decisionEngine";
 
@@ -45,11 +46,12 @@ function getMinerviniStyle(isMinervini: boolean) {
 }
 
 export default function AnalysisPanel() {
+  const { selectedSymbol } = useSelectedStockContext();
   const [view, setView] = useState<AnalysisView | null>(null);
 
   useEffect(() => {
     async function loadAnalysis() {
-      const candles = await marketService.getCandles("THYAO");
+      const candles = await marketService.getCandles(selectedSymbol);
       const analysis = analyzeStock(candles);
       const decision = makeDecision(analysis);
 
@@ -60,7 +62,7 @@ export default function AnalysisPanel() {
     }
 
     loadAnalysis();
-  }, []);
+  }, [selectedSymbol]);
 
   if (!view) return null;
 
@@ -72,7 +74,8 @@ export default function AnalysisPanel() {
         <div>
           <h3 className="text-xl font-bold">SCORIX Analiz Paneli</h3>
           <p className="mt-1 text-sm text-slate-500">
-            RSI · EMA · MACD · Volume · Breakout · Smart Money · Minervini
+            {selectedSymbol} · RSI · EMA · MACD · Volume · Breakout · Smart
+            Money · Minervini
           </p>
         </div>
 

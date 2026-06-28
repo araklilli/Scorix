@@ -5,6 +5,7 @@ import { marketService } from "../services/marketService";
 import { analyzeStock } from "../engine/analysisEngine";
 import { calculateIntelligence } from "../engine/intelligenceEngine";
 import type { IntelligenceResult } from "../engine/intelligenceEngine";
+import { useSelectedStockContext } from "../context/SelectedStockContext";
 import ScoreGauge from "./ScoreGauge";
 
 function getRatingStyle(rating: IntelligenceResult["rating"]) {
@@ -26,11 +27,12 @@ function getRiskStyle(risk: IntelligenceResult["risk"]) {
 }
 
 export default function ScorixScoreCard() {
+  const { selectedSymbol } = useSelectedStockContext();
   const [result, setResult] = useState<IntelligenceResult | null>(null);
 
   useEffect(() => {
     async function loadScore() {
-      const candles = await marketService.getCandles("THYAO");
+      const candles = await marketService.getCandles(selectedSymbol);
       const analysis = analyzeStock(candles);
       const intelligence = calculateIntelligence(analysis);
 
@@ -38,7 +40,7 @@ export default function ScorixScoreCard() {
     }
 
     loadScore();
-  }, []);
+  }, [selectedSymbol]);
 
   if (!result) return null;
 
@@ -47,7 +49,7 @@ export default function ScorixScoreCard() {
       <div className="flex flex-col gap-8 xl:flex-row xl:items-center xl:justify-between">
         <div className="max-w-2xl">
           <div className="inline-flex rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-xs font-semibold text-emerald-300">
-            SCORIX Intelligence Core
+            {selectedSymbol} · SCORIX Intelligence Core
           </div>
 
           <h3 className="mt-5 text-5xl font-black tracking-tight">
@@ -60,16 +62,22 @@ export default function ScorixScoreCard() {
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
-            {["RSI", "EMA", "MACD", "VOLUME", "BREAKOUT", "SMART MONEY", "MINERVINI"].map(
-              (item) => (
-                <span
-                  key={item}
-                  className="rounded-full border border-white/10 bg-black/30 px-3 py-1 text-xs text-slate-300"
-                >
-                  {item}
-                </span>
-              )
-            )}
+            {[
+              "RSI",
+              "EMA",
+              "MACD",
+              "VOLUME",
+              "BREAKOUT",
+              "SMART MONEY",
+              "MINERVINI",
+            ].map((item) => (
+              <span
+                key={item}
+                className="rounded-full border border-white/10 bg-black/30 px-3 py-1 text-xs text-slate-300"
+              >
+                {item}
+              </span>
+            ))}
           </div>
         </div>
 
@@ -81,7 +89,11 @@ export default function ScorixScoreCard() {
       <div className="mt-8 grid gap-4 md:grid-cols-4">
         <div className="rounded-2xl border border-white/10 bg-black/35 p-5">
           <p className="text-xs text-slate-500">Rating</p>
-          <p className={`mt-2 text-2xl font-black ${getRatingStyle(result.rating)}`}>
+          <p
+            className={`mt-2 text-2xl font-black ${getRatingStyle(
+              result.rating
+            )}`}
+          >
             {result.rating}
           </p>
         </div>
@@ -93,7 +105,11 @@ export default function ScorixScoreCard() {
 
         <div className="rounded-2xl border border-white/10 bg-black/35 p-5">
           <p className="text-xs text-slate-500">Risk</p>
-          <p className={`mt-2 text-2xl font-black ${getRiskStyle(result.risk)}`}>
+          <p
+            className={`mt-2 text-2xl font-black ${getRiskStyle(
+              result.risk
+            )}`}
+          >
             {result.risk}
           </p>
         </div>
