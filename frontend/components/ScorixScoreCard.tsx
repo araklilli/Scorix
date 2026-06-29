@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { marketService } from "../services/marketService";
-import { analyzeStock } from "../engine/analysisEngine";
-import { calculateIntelligence } from "../engine/intelligenceEngine";
+import { stockAnalysisService } from "../services/stockAnalysisService";
 import type { IntelligenceResult } from "../engine/intelligenceEngine";
 import { useSelectedStockContext } from "../context/SelectedStockContext";
 import ScoreGauge from "./ScoreGauge";
@@ -32,11 +30,8 @@ export default function ScorixScoreCard() {
 
   useEffect(() => {
     async function loadScore() {
-      const candles = await marketService.getCandles(selectedSymbol);
-      const analysis = analyzeStock(candles);
-      const intelligence = calculateIntelligence(analysis);
-
-      setResult(intelligence);
+      const stockAnalysis = await stockAnalysisService.analyze(selectedSymbol);
+      setResult(stockAnalysis.intelligence);
     }
 
     loadScore();

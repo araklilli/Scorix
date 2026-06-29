@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { marketService } from "../services/marketService";
-import { analyzeStock } from "../engine/analysisEngine";
-import { makeDecision } from "../engine/decisionEngine";
+import { stockAnalysisService } from "../services/stockAnalysisService";
 import { useSelectedStockContext } from "../context/SelectedStockContext";
 import type { AnalysisResult } from "../engine/analysisEngine";
 import type { DecisionResult } from "../engine/decisionEngine";
@@ -51,13 +49,11 @@ export default function AnalysisPanel() {
 
   useEffect(() => {
     async function loadAnalysis() {
-      const candles = await marketService.getCandles(selectedSymbol);
-      const analysis = analyzeStock(candles);
-      const decision = makeDecision(analysis);
+      const stockAnalysis = await stockAnalysisService.analyze(selectedSymbol);
 
       setView({
-        analysis,
-        decision,
+        analysis: stockAnalysis.analysis,
+        decision: stockAnalysis.decision,
       });
     }
 

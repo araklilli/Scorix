@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { createChart, ColorType, CandlestickSeries } from "lightweight-charts";
-import { marketService } from "../services/marketService";
+import { stockAnalysisService } from "../services/stockAnalysisService";
 import { useSelectedStockContext } from "../context/SelectedStockContext";
 
 export default function ScorixChart() {
@@ -19,7 +19,8 @@ export default function ScorixChart() {
 
       chartRef.current.innerHTML = "";
 
-      const candles = await marketService.getCandles(selectedSymbol);
+      const stockAnalysis = await stockAnalysisService.analyze(selectedSymbol);
+      const candles = stockAnalysis.candles;
 
       chart = createChart(chartRef.current, {
         layout: {
@@ -74,7 +75,7 @@ export default function ScorixChart() {
         <div>
           <h3 className="text-xl font-bold">{selectedSymbol} Price Chart</h3>
           <p className="mt-1 text-sm text-slate-500">
-            Native candlestick chart · Market Service
+            Native candlestick chart · Stock Analysis Service
           </p>
         </div>
 

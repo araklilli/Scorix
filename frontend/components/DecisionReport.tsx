@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { marketService } from "../services/marketService";
-import { analyzeStock } from "../engine/analysisEngine";
-import { makeDecision } from "../engine/decisionEngine";
-import { generateExplanation } from "../engine/explanationEngine";
+import { stockAnalysisService } from "../services/stockAnalysisService";
 import { useSelectedStockContext } from "../context/SelectedStockContext";
 import type { ExplanationResult } from "../engine/explanationEngine";
 
@@ -14,12 +11,8 @@ export default function DecisionReport() {
 
   useEffect(() => {
     async function loadReport() {
-      const candles = await marketService.getCandles(selectedSymbol);
-      const analysis = analyzeStock(candles);
-      const decision = makeDecision(analysis);
-      const explanation = generateExplanation(analysis, decision);
-
-      setReport(explanation);
+      const stockAnalysis = await stockAnalysisService.analyze(selectedSymbol);
+      setReport(stockAnalysis.explanation);
     }
 
     loadReport();
