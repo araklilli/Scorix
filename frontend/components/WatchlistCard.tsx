@@ -7,7 +7,7 @@ export function WatchlistCard() {
   const { watchlist, toggleWatchlist, isInWatchlist } =
     useWatchlistContext();
 
-  const { selectedSymbol } = useSelectedStockContext();
+  const { selectedSymbol, setSelectedSymbol } = useSelectedStockContext();
 
   return (
     <section className="mt-6 rounded-3xl border border-white/10 bg-white/[0.03] p-6">
@@ -40,27 +40,47 @@ export function WatchlistCard() {
         </div>
       ) : (
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          {watchlist.map((symbol) => (
-            <div
-              key={symbol}
-              className="rounded-2xl border border-white/10 bg-black/30 p-4 transition hover:border-emerald-400/30"
-            >
-              <div className="flex items-center justify-between">
-                <h4 className="text-lg font-bold">{symbol}</h4>
+          {watchlist.map((symbol) => {
+            const isSelected = symbol === selectedSymbol;
 
-                <button
-                  onClick={() => toggleWatchlist(symbol)}
-                  className="text-red-300 transition hover:text-red-200"
-                >
-                  ✕
-                </button>
-              </div>
+            return (
+              <button
+                key={symbol}
+                onClick={() => setSelectedSymbol(symbol)}
+                className={`rounded-2xl border p-4 text-left transition ${
+                  isSelected
+                    ? "border-emerald-400/40 bg-emerald-400/10"
+                    : "border-white/10 bg-black/30 hover:border-emerald-400/30"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <h4 className="text-lg font-bold">{symbol}</h4>
 
-              <p className="mt-2 text-xs text-slate-500">
-                Saved in Local Storage
-              </p>
-            </div>
-          ))}
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleWatchlist(symbol);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.stopPropagation();
+                        toggleWatchlist(symbol);
+                      }
+                    }}
+                    className="cursor-pointer text-red-300 transition hover:text-red-200"
+                  >
+                    ✕
+                  </span>
+                </div>
+
+                <p className="mt-2 text-xs text-slate-500">
+                  {isSelected ? "Active analysis" : "Click to analyze"}
+                </p>
+              </button>
+            );
+          })}
         </div>
       )}
     </section>
