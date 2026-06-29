@@ -1,9 +1,15 @@
+"use client";
+
+import { useSelectedStockContext } from "../context/SelectedStockContext";
+
 export default function StatsCard() {
+  const { selectedSymbol } = useSelectedStockContext();
+
   const stats = [
     {
       title: "En Yüksek Skor",
       value: "94",
-      desc: "THYAO / Momentum",
+      desc: `${selectedSymbol} / Momentum`,
       highlight: true,
     },
     {
@@ -43,12 +49,24 @@ export default function StatsCard() {
               : "border-white/10 bg-white/[0.03]"
           }`}
         >
-          <p className={item.highlight ? "text-sm text-emerald-300" : "text-sm text-slate-400"}>
+          <p
+            className={
+              item.highlight
+                ? "text-sm text-emerald-300"
+                : "text-sm text-slate-400"
+            }
+          >
             {item.title}
           </p>
-          <div className={`mt-3 font-bold ${item.value === "94" ? "text-6xl" : "text-3xl"}`}>
+
+          <div
+            className={`mt-3 font-bold ${
+              item.value === "94" ? "text-6xl" : "text-3xl"
+            }`}
+          >
             {item.value}
           </div>
+
           <p className="mt-3 text-sm text-slate-500">{item.desc}</p>
         </div>
       ))}

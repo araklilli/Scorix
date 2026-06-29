@@ -72,9 +72,9 @@ export default function ScorixChart() {
     <section className="mt-6 rounded-3xl border border-white/10 bg-white/[0.03] p-6">
       <div className="mb-5 flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-bold">SCORIX Grafik Motoru</h3>
+          <h3 className="text-xl font-bold">{selectedSymbol} Price Chart</h3>
           <p className="mt-1 text-sm text-slate-500">
-            {selectedSymbol} demo mum grafiği · Market Service
+            Native candlestick chart · Market Service
           </p>
         </div>
 

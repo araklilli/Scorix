@@ -72,10 +72,11 @@ export default function AnalysisPanel() {
     <section className="mt-6 rounded-3xl border border-white/10 bg-white/[0.03] p-6">
       <div className="mb-5 flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-bold">SCORIX Analiz Paneli</h3>
+          <h3 className="text-xl font-bold">
+            {selectedSymbol} Technical Analysis
+          </h3>
           <p className="mt-1 text-sm text-slate-500">
-            {selectedSymbol} · RSI · EMA · MACD · Volume · Breakout · Smart
-            Money · Minervini
+            RSI · EMA · MACD · Volume · Breakout · Smart Money · Minervini
           </p>
         </div>
 
