@@ -10,6 +10,8 @@ import AnalysisPanel from "../components/AnalysisPanel";
 import ScorixScoreCard from "../components/ScorixScoreCard";
 import DecisionReport from "../components/DecisionReport";
 import TopOpportunities from "../components/TopOpportunities";
+import { WatchlistCard } from "../components/WatchlistCard";
+
 import { useSelectedStockContext } from "../context/SelectedStockContext";
 
 export default function Home() {
@@ -44,6 +46,8 @@ export default function Home() {
           <StatsCard />
 
           <ScorixScoreCard />
+
+          <WatchlistCard />
 
           <TopOpportunities />
 
