@@ -1,15 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { stockAnalysisService } from "../services/stockAnalysisService";
 import { useSelectedStockContext } from "../context/SelectedStockContext";
+import { useAnalysisContext } from "../context/AnalysisContext";
 import type { AnalysisResult } from "../engine/analysisEngine";
 import type { DecisionResult } from "../engine/decisionEngine";
-
-type AnalysisView = {
-  analysis: AnalysisResult;
-  decision: DecisionResult;
-};
 
 function getDecisionStyle(decision: DecisionResult["decision"]) {
   if (decision === "STRONG BUY" || decision === "BUY") {
@@ -45,24 +39,14 @@ function getMinerviniStyle(isMinervini: boolean) {
 
 export default function AnalysisPanel() {
   const { selectedSymbol } = useSelectedStockContext();
-  const [view, setView] = useState<AnalysisView | null>(null);
+  const { stockAnalysis, isLoading, error } = useAnalysisContext();
 
-  useEffect(() => {
-    async function loadAnalysis() {
-      const stockAnalysis = await stockAnalysisService.analyze(selectedSymbol);
+  if (isLoading) return null;
+  if (error) return null;
+  if (!stockAnalysis) return null;
 
-      setView({
-        analysis: stockAnalysis.analysis,
-        decision: stockAnalysis.decision,
-      });
-    }
-
-    loadAnalysis();
-  }, [selectedSymbol]);
-
-  if (!view) return null;
-
-  const { analysis, decision } = view;
+  const analysis = stockAnalysis.analysis;
+  const decision = stockAnalysis.decision;
 
   return (
     <section className="mt-6 rounded-3xl border border-white/10 bg-white/[0.03] p-6">

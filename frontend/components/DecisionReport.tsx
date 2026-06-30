@@ -1,24 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { stockAnalysisService } from "../services/stockAnalysisService";
 import { useSelectedStockContext } from "../context/SelectedStockContext";
-import type { ExplanationResult } from "../engine/explanationEngine";
+import { useAnalysisContext } from "../context/AnalysisContext";
 
 export default function DecisionReport() {
   const { selectedSymbol } = useSelectedStockContext();
-  const [report, setReport] = useState<ExplanationResult | null>(null);
+  const { stockAnalysis, isLoading, error } = useAnalysisContext();
 
-  useEffect(() => {
-    async function loadReport() {
-      const stockAnalysis = await stockAnalysisService.analyze(selectedSymbol);
-      setReport(stockAnalysis.explanation);
-    }
+  if (isLoading) return null;
+  if (error) return null;
+  if (!stockAnalysis) return null;
 
-    loadReport();
-  }, [selectedSymbol]);
-
-  if (!report) return null;
+  const report = stockAnalysis.explanation;
 
   return (
     <section className="mt-6 rounded-3xl border border-white/10 bg-white/[0.03] p-6">
@@ -27,6 +20,7 @@ export default function DecisionReport() {
           <h3 className="text-xl font-bold">
             {selectedSymbol} AI Decision Report
           </h3>
+
           <p className="mt-1 text-sm text-emerald-300">
             Dynamic report powered by SCORIX Explanation Engine
           </p>
@@ -37,7 +31,9 @@ export default function DecisionReport() {
 
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
         <div className="rounded-2xl border border-emerald-400/10 bg-emerald-400/5 p-4">
-          <p className="text-sm font-bold text-emerald-300">Pozitifler</p>
+          <p className="text-sm font-bold text-emerald-300">
+            Pozitifler
+          </p>
 
           <ul className="mt-3 space-y-2 text-sm text-slate-300">
             {report.positives.map((item) => (
@@ -47,7 +43,9 @@ export default function DecisionReport() {
         </div>
 
         <div className="rounded-2xl border border-yellow-400/10 bg-yellow-400/5 p-4">
-          <p className="text-sm font-bold text-yellow-300">Uyarılar</p>
+          <p className="text-sm font-bold text-yellow-300">
+            Uyarılar
+          </p>
 
           <ul className="mt-3 space-y-2 text-sm text-slate-300">
             {report.warnings.map((item) => (
@@ -57,7 +55,9 @@ export default function DecisionReport() {
         </div>
 
         <div className="rounded-2xl border border-red-400/10 bg-red-400/5 p-4">
-          <p className="text-sm font-bold text-red-300">Negatifler</p>
+          <p className="text-sm font-bold text-red-300">
+            Negatifler
+          </p>
 
           <ul className="mt-3 space-y-2 text-sm text-slate-300">
             {report.negatives.length > 0 ? (

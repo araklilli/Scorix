@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { stockAnalysisService } from "../services/stockAnalysisService";
 import type { IntelligenceResult } from "../engine/intelligenceEngine";
 import { useSelectedStockContext } from "../context/SelectedStockContext";
+import { useAnalysisContext } from "../context/AnalysisContext";
 import ScoreGauge from "./ScoreGauge";
 
 function getRatingStyle(rating: IntelligenceResult["rating"]) {
@@ -26,18 +25,13 @@ function getRiskStyle(risk: IntelligenceResult["risk"]) {
 
 export default function ScorixScoreCard() {
   const { selectedSymbol } = useSelectedStockContext();
-  const [result, setResult] = useState<IntelligenceResult | null>(null);
+  const { stockAnalysis, isLoading, error } = useAnalysisContext();
 
-  useEffect(() => {
-    async function loadScore() {
-      const stockAnalysis = await stockAnalysisService.analyze(selectedSymbol);
-      setResult(stockAnalysis.intelligence);
-    }
+  if (isLoading) return null;
+  if (error) return null;
+  if (!stockAnalysis) return null;
 
-    loadScore();
-  }, [selectedSymbol]);
-
-  if (!result) return null;
+  const result = stockAnalysis.intelligence;
 
   return (
     <section className="mt-6 overflow-hidden rounded-[2rem] border border-emerald-400/20 bg-gradient-to-br from-emerald-400/15 via-white/[0.04] to-black p-8 shadow-2xl shadow-emerald-950/40">

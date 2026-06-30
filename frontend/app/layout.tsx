@@ -4,6 +4,7 @@ import "./globals.css";
 
 import { SelectedStockProvider } from "../context/SelectedStockContext";
 import { WatchlistProvider } from "../context/WatchlistContext";
+import { AnalysisProvider } from "../context/AnalysisContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +34,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <SelectedStockProvider>
           <WatchlistProvider>
-            {children}
+            <AnalysisProvider>{children}</AnalysisProvider>
           </WatchlistProvider>
         </SelectedStockProvider>
       </body>
