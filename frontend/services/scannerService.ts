@@ -1,6 +1,5 @@
 import { marketService } from "./marketService";
-import { analyzeStock } from "../engine/analysisEngine";
-import { calculateIntelligence } from "../engine/intelligenceEngine";
+import { stockAnalysisService } from "./stockAnalysisService";
 
 export interface ScanResult {
   symbol: string;
@@ -10,6 +9,9 @@ export interface ScanResult {
   confidence: number;
   risk: "LOW" | "MEDIUM" | "HIGH";
   stars: number;
+  breakout: boolean;
+  smartMoney: boolean;
+  minervini: boolean;
 }
 
 export const scannerService = {
@@ -18,18 +20,19 @@ export const scannerService = {
 
     const results = await Promise.all(
       stocks.map(async (stock) => {
-        const candles = await marketService.getCandles(stock.symbol);
-        const analysis = analyzeStock(candles);
-        const intelligence = calculateIntelligence(analysis);
+        const stockAnalysis = await stockAnalysisService.analyze(stock.symbol);
 
         return {
           symbol: stock.symbol,
           name: stock.name,
-          score: intelligence.score,
-          rating: intelligence.rating,
-          confidence: intelligence.confidence,
-          risk: intelligence.risk,
-          stars: intelligence.stars,
+          score: stockAnalysis.intelligence.score,
+          rating: stockAnalysis.intelligence.rating,
+          confidence: stockAnalysis.intelligence.confidence,
+          risk: stockAnalysis.intelligence.risk,
+          stars: stockAnalysis.intelligence.stars,
+          breakout: stockAnalysis.analysis.breakout,
+          smartMoney: stockAnalysis.analysis.smartMoney,
+          minervini: stockAnalysis.analysis.minervini,
         };
       })
     );

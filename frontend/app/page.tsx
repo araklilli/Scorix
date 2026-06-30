@@ -11,6 +11,8 @@ import ScorixScoreCard from "../components/ScorixScoreCard";
 import DecisionReport from "../components/DecisionReport";
 import TopOpportunities from "../components/TopOpportunities";
 import { WatchlistCard } from "../components/WatchlistCard";
+import ScannerPanel from "../components/ScannerPanel";
+import ScannerResults from "../components/ScannerResults";
 
 import { useSelectedStockContext } from "../context/SelectedStockContext";
 
@@ -48,6 +50,16 @@ export default function Home() {
           <ScorixScoreCard />
 
           <WatchlistCard />
+
+          <section className="mt-6 grid gap-6 xl:grid-cols-4">
+            <div className="xl:col-span-1">
+              <ScannerPanel />
+            </div>
+
+            <div className="xl:col-span-3">
+              <ScannerResults />
+            </div>
+          </section>
 
           <TopOpportunities />
 
