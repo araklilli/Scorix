@@ -6,6 +6,7 @@ import { SelectedStockProvider } from "../context/SelectedStockContext";
 import { WatchlistProvider } from "../context/WatchlistContext";
 import { AnalysisProvider } from "../context/AnalysisContext";
 import { ScannerProvider } from "../context/ScannerContext";
+import { PortfolioProvider } from "../context/PortfolioContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,7 +37,11 @@ export default function RootLayout({
         <SelectedStockProvider>
           <WatchlistProvider>
             <AnalysisProvider>
-              <ScannerProvider>{children}</ScannerProvider>
+              <ScannerProvider>
+                <PortfolioProvider>
+                  {children}
+                </PortfolioProvider>
+              </ScannerProvider>
             </AnalysisProvider>
           </WatchlistProvider>
         </SelectedStockProvider>
