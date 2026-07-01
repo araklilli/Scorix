@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
@@ -75,17 +76,21 @@ export function ScannerProvider({ children }: ScannerProviderProps) {
   async function refreshScanner() {
     setIsLoading(true);
 
-    const scanResults = await scannerService.scanMarket();
-
-    setResults(scanResults);
-    setIsLoading(false);
+    try {
+      const scanResults = await scannerService.scanMarket();
+      setResults(scanResults);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {
     refreshScanner();
   }, []);
 
-  const filteredResults = applyFilters(results, filters);
+  const filteredResults = useMemo(() => {
+    return applyFilters(results, filters);
+  }, [results, filters]);
 
   function setMinScore(score: number) {
     setFilters((current) => ({
@@ -133,22 +138,25 @@ export function ScannerProvider({ children }: ScannerProviderProps) {
     }));
   }
 
+  const value = useMemo(
+    () => ({
+      results,
+      filteredResults,
+      filters,
+      isLoading,
+      setMinScore,
+      toggleRating,
+      toggleRisk,
+      toggleBreakoutOnly,
+      toggleSmartMoneyOnly,
+      toggleMinerviniOnly,
+      refreshScanner,
+    }),
+    [results, filteredResults, filters, isLoading]
+  );
+
   return (
-    <ScannerContext.Provider
-      value={{
-        results,
-        filteredResults,
-        filters,
-        isLoading,
-        setMinScore,
-        toggleRating,
-        toggleRisk,
-        toggleBreakoutOnly,
-        toggleSmartMoneyOnly,
-        toggleMinerviniOnly,
-        refreshScanner,
-      }}
-    >
+    <ScannerContext.Provider value={value}>
       {children}
     </ScannerContext.Provider>
   );

@@ -1,5 +1,6 @@
 import { marketService } from "./marketService";
 import { stockAnalysisService } from "./stockAnalysisService";
+import { scannerCacheService } from "./scannerCacheService";
 
 export interface ScanResult {
   symbol: string;
@@ -15,7 +16,15 @@ export interface ScanResult {
 }
 
 export const scannerService = {
-  async scanMarket(): Promise<ScanResult[]> {
+  async scanMarket(forceRefresh = false): Promise<ScanResult[]> {
+    if (!forceRefresh) {
+      const cachedResults = scannerCacheService.get();
+
+      if (cachedResults) {
+        return cachedResults;
+      }
+    }
+
     const stocks = marketService.getTopStocks();
 
     const results = await Promise.all(
@@ -37,6 +46,14 @@ export const scannerService = {
       })
     );
 
-    return results.sort((a, b) => b.score - a.score);
+    const sortedResults = results.sort((a, b) => b.score - a.score);
+
+    scannerCacheService.set(sortedResults);
+
+    return sortedResults;
+  },
+
+  clearCache() {
+    scannerCacheService.clear();
   },
 };
