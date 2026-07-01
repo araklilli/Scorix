@@ -15,6 +15,7 @@ import ScannerPanel from "../components/ScannerPanel";
 import ScannerResults from "../components/ScannerResults";
 import PortfolioCard from "../components/PortfolioCard";
 import PortfolioSummary from "../components/PortfolioSummary";
+import PortfolioAdvisorCard from "../components/portfolioAdvisor/PortfolioAdvisorCard";
 
 import { useSelectedStockContext } from "../context/SelectedStockContext";
 
@@ -54,6 +55,8 @@ export default function Home() {
           <WatchlistCard />
 
           <PortfolioSummary />
+
+          <PortfolioAdvisorCard />
 
           <PortfolioCard />
 
