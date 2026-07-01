@@ -14,6 +14,7 @@ import { WatchlistCard } from "../components/WatchlistCard";
 import ScannerPanel from "../components/ScannerPanel";
 import ScannerResults from "../components/ScannerResults";
 import PortfolioCard from "../components/PortfolioCard";
+import PortfolioSummary from "../components/PortfolioSummary";
 
 import { useSelectedStockContext } from "../context/SelectedStockContext";
 
@@ -51,6 +52,8 @@ export default function Home() {
           <ScorixScoreCard />
 
           <WatchlistCard />
+
+          <PortfolioSummary />
 
           <PortfolioCard />
 
